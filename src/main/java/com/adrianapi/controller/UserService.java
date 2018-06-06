@@ -2,61 +2,80 @@ package com.adrianapi.controller;
 
 import com.adrianapi.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
-public class UserService {
+class UserService {
 
     @Autowired
     private UserRepository userRepository;
 
-//    List<User> users = new ArrayList<>(Arrays.asList(
-//            new User("Mike", "aPassword", "anEmailAddress"),
-//                new User("Liam", "password", "email"),
-//                new User("Paty", "pass123", "anEmail@Address.com")
-//    ));
 
-
-    public List<User> getAllUsers() {
-        // return users;
+    List<User> getAllUsers() {
+        // return users
         List<User> users = new ArrayList<>();
         userRepository.findAll()
                 .forEach(users::add);
+        if (users.isEmpty()) {
+            throw new EmptyDatabaseException("No users in the database");
+        }
         return users;
     }
 
-    public Optional<User> getUser(Integer id) {
-        // return users.stream()
-        //        .filter(u -> u.getName().equalsIgnoreCase(name))
-        //        .findFirst()
-        //        .get();
-        return userRepository.findById(id);
+    User getUser(Integer id) throws UserNotFoundException {
+        User user;
+        if(userRepository.findById(id).isPresent()) {
+            user = userRepository.findById(id).get();
+            return user;
+        } else {
+            throw new UserNotFoundException("User not found. Id: " + id);
+        }
     }
 
-    public void addUser(User user) {
-        // users.add(user);
-        userRepository.save(user);
+    AddingResponse addUser(User user) {
+        try {
+            userRepository.save(user);
+            return new AddingResponse(user.getId());
+        } catch (DataIntegrityViolationException ex) {
+            throw new UserDataException("User not added to the database.");
+        }
     }
 
 
-    public void updateUser(Integer id, User user) {
-//        User userHolder;
-//        for (int i = 0; i < users.size(); i++) {
-//             userHolder = users.get(i);
-//            if(userHolder.getName().equalsIgnoreCase(name)) {
-//                users.set(i, user);
-//            }
-//        }
-        userRepository.save(user);
+    DeletingResponse deleteUser(Integer id) throws UserNotFoundException {
+        try {
+            userRepository.deleteById(id);
+            return new DeletingResponse(id);
+        } catch (EmptyResultDataAccessException ex) {
+            throw new UserNotFoundException("User to be deleted doesn't exist. Id: " + id);
+        }
     }
 
-    public void deleteUser(Integer id) {
+    void updateUserFull(User user) {
+        try {
+            userRepository.save(user);
+        } catch (DataIntegrityViolationException ex) {
+            throw new UserDataException("User not updated.");
+        }
+    }
 
-        // users.removeIf(u -> u.getName().equalsIgnoreCase(name));
-        userRepository.deleteById(id);
+    User updateUserPartial(User user, Integer id) throws UserNotFoundException {
+        User userToBeUpdated = getUser(id);
+        if (user.getName() != null) {
+            userToBeUpdated.setName(user.getName());
+        }
+        if (user.getPassword() != null) {
+            userToBeUpdated.setPassword(user.getPassword());
+        }
+        if (user.getEmail() != null) {
+            userToBeUpdated.setEmail(user.getEmail());
+        }
+        userRepository.save(userToBeUpdated);
+        return userToBeUpdated;
     }
 }
