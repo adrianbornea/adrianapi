@@ -2,6 +2,7 @@ package com.adrianapi.controller;
 
 import com.adrianapi.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -26,9 +27,15 @@ public class UserController {
         return userService.getUser(id);
     }
 
+//    @RequestMapping(value="/users", method = RequestMethod.POST)
+//    public AddingResponse addUser(@RequestBody User user) {
+//        return userService.addUser(user);
+//    }
+
     @RequestMapping(value="/users", method = RequestMethod.POST)
-    public AddingResponse addUser(@RequestBody User user) {
-        return userService.addUser(user);
+    public ResponseEntity<?> addUser(@RequestBody User user) {
+        userService.addUser(user);
+        return new ResponseEntity<>(user, HttpStatus.CREATED);
     }
 
     @RequestMapping(value="/users/{id}", method = RequestMethod.PUT)

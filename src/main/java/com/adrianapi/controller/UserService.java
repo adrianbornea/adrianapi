@@ -48,7 +48,6 @@ class UserService {
         }
     }
 
-
     DeletingResponse deleteUser(Integer id) throws UserNotFoundException {
         try {
             userRepository.deleteById(id);
