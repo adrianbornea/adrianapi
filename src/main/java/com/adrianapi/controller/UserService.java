@@ -1,6 +1,8 @@
 package com.adrianapi.controller;
 
 import com.adrianapi.model.User;
+import org.modelmapper.Conditions;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -64,18 +66,30 @@ class UserService {
         }
     }
 
+//    User updateUserPartial(User user, Integer id) throws UserNotFoundException {
+//        User userToBeUpdated = getUser(id);
+//        if (user.getName() != null) {
+//            userToBeUpdated.setName(user.getName());
+//        }
+//        if (user.getPassword() != null) {
+//            userToBeUpdated.setPassword(user.getPassword());
+//        }
+//        if (user.getEmail() != null) {
+//            userToBeUpdated.setEmail(user.getEmail());
+//        }
+//        userRepository.save(userToBeUpdated);
+//        return userToBeUpdated;
+//    }
+
     User updateUserPartial(User user, Integer id) throws UserNotFoundException {
         User userToBeUpdated = getUser(id);
-        if (user.getName() != null) {
-            userToBeUpdated.setName(user.getName());
-        }
-        if (user.getPassword() != null) {
-            userToBeUpdated.setPassword(user.getPassword());
-        }
-        if (user.getEmail() != null) {
-            userToBeUpdated.setEmail(user.getEmail());
-        }
+
+        ModelMapper modelMapper = new ModelMapper();
+        modelMapper.getConfiguration().setPropertyCondition(Conditions.isNotNull());
+        modelMapper.map(user, userToBeUpdated);
+
         userRepository.save(userToBeUpdated);
+
         return userToBeUpdated;
     }
 }
