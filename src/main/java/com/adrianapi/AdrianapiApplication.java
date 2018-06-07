@@ -10,6 +10,5 @@ public class AdrianapiApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(AdrianapiApplication.class, args);
-
 	}
 }
