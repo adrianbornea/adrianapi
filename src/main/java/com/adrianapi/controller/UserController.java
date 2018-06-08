@@ -55,4 +55,10 @@ public class UserController {
     public DeletingResponse deleteUser(@PathVariable Integer id) throws UserNotFoundException {
         return userService.deleteUser(id);
     }
+
+    @RequestMapping(value="/users", method = RequestMethod.DELETE)
+    public ResponseEntity<?> deleteAll() {
+        userService.deleteAll();
+        return new ResponseEntity<>("All entries were deleted", HttpStatus.OK);
+    }
 }

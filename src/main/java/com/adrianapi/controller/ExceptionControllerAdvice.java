@@ -25,7 +25,7 @@ public class ExceptionControllerAdvice {
         errorDetails.setStatus(HttpStatus.NO_CONTENT);
         errorDetails.setError(ex.getMessage());
         errorDetails.setMessage("Add a few users and try again.");
-        return new ResponseEntity<ErrorDetails>(errorDetails, HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(errorDetails, HttpStatus.NO_CONTENT);
     }
 
     @ExceptionHandler(UserDataException.class)

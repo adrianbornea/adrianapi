@@ -30,7 +30,7 @@ class UserService {
     }
 
     User getUser(Integer id) throws UserNotFoundException {
-        User user;
+        User user=null;
         if(userRepository.findById(id).isPresent()) {
             user = userRepository.findById(id).get();
             return user;
@@ -55,6 +55,10 @@ class UserService {
         } catch (EmptyResultDataAccessException ex) {
             throw new UserNotFoundException("User to be deleted doesn't exist. Id: " + id);
         }
+    }
+
+    public void deleteAll() {
+            userRepository.deleteAll();
     }
 
     void updateUserFull(User user) {
@@ -91,4 +95,5 @@ class UserService {
 
         return userToBeUpdated;
     }
+
 }
