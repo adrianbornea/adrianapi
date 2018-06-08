@@ -1,15 +1,14 @@
 package com.adrianapi.controller;
 
+import com.adrianapi.controller.exceptions.EmptyDatabaseException;
+import com.adrianapi.controller.exceptions.UserNotFoundException;
 import com.adrianapi.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 
 @RestController
 public class UserController {
@@ -57,7 +56,7 @@ public class UserController {
     }
 
     @RequestMapping(value="/users", method = RequestMethod.DELETE)
-    public ResponseEntity<?> deleteAll() {
+    public ResponseEntity<?> deleteAll() throws EmptyDatabaseException {
         userService.deleteAll();
         return new ResponseEntity<>("All entries were deleted", HttpStatus.OK);
     }

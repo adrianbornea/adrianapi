@@ -1,5 +1,8 @@
 package com.adrianapi.controller;
 
+import com.adrianapi.controller.exceptions.EmptyDatabaseException;
+import com.adrianapi.controller.exceptions.UserDataException;
+import com.adrianapi.controller.exceptions.UserNotFoundException;
 import com.adrianapi.model.User;
 import org.modelmapper.Conditions;
 import org.modelmapper.ModelMapper;
@@ -24,7 +27,7 @@ class UserService {
         userRepository.findAll()
                 .forEach(users::add);
         if (users.isEmpty()) {
-            throw new EmptyDatabaseException("No users in the database");
+            throw new EmptyDatabaseException();
         }
         return users;
     }
@@ -57,8 +60,12 @@ class UserService {
         }
     }
 
-    public void deleteAll() {
-            userRepository.deleteAll();
+    public void deleteAll() throws EmptyDatabaseException {
+           if (userRepository.findFirstByOrderById() != null) {
+                userRepository.deleteAll();
+           } else {
+               throw  new EmptyDatabaseException();
+           }
     }
 
     void updateUserFull(User user) {

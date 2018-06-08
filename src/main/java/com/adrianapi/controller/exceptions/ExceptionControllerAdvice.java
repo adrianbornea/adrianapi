@@ -1,4 +1,4 @@
-package com.adrianapi.controller;
+package com.adrianapi.controller.exceptions;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,12 +20,7 @@ public class ExceptionControllerAdvice {
 
     @ExceptionHandler(EmptyDatabaseException.class)
     public ResponseEntity<ErrorDetails> emptyDatabaseExceptionHandler(Exception ex) {
-        ErrorDetails errorDetails = new ErrorDetails();
-        errorDetails.setStatusCode(HttpStatus.NO_CONTENT.value());
-        errorDetails.setStatus(HttpStatus.NO_CONTENT);
-        errorDetails.setError(ex.getMessage());
-        errorDetails.setMessage("Add a few users and try again.");
-        return new ResponseEntity<>(errorDetails, HttpStatus.NO_CONTENT);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     @ExceptionHandler(UserDataException.class)
